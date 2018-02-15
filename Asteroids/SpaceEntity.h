@@ -19,25 +19,7 @@ public:
 
 	SpaceEntity();
 	virtual ~SpaceEntity();
-
-	bool isActive() const;
-
-	void activate();
-	void deactivate();
-
-	// Gets the distance between center of entity and left (x) and top (y) 
-	sf::Vector2f getMidOffset() const;
-
-	//bool collision(SpaceEntity* other);
-
-protected:
-
-	// Updates the current Scene Node
-	virtual void updateCurrent(float deltaTime) override;
-	virtual void onActivate() { }
-	virtual void onDeactivate() { }
-
-private:
-	bool m_bActive;
+	
+	virtual void update(float deltaTime) override;
 };
 

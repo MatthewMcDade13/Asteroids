@@ -10,6 +10,8 @@ namespace sf
 	typedef Vector2<float> Vector2f;
 }
 
+class Bullet;
+
 class SpaceShip final : public SpaceEntity
 {
 public:
@@ -27,10 +29,13 @@ public:
 	sf::FloatRect getGlobalBounds() const;
 	sf::Vector2f getMidOffset() const;
 
+	std::unique_ptr<Bullet> fire() const;
+
 private:
+	static constexpr float m_bulletSpeed = 100.f;
 	WireFrameShape m_body;
 	// Draws the current Scene Node.
-	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const final override;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const final override;
 };
 
 

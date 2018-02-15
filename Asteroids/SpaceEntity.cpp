@@ -13,24 +13,8 @@ SpaceEntity::~SpaceEntity()
 {
 }
 
-bool SpaceEntity::isActive() const
-{
-	return m_bActive;
-}
 
-void SpaceEntity::activate()
-{
-	m_bActive = true;
-	onActivate();
-}
-
-void SpaceEntity::deactivate()
-{
-	m_bActive = false;
-	onDeactivate();
-}
-
-void SpaceEntity::updateCurrent(float deltaTime)
+void SpaceEntity::update(float deltaTime)
 {
 	/// All entities in space should be constantly moving since there is no
 	/// gravity or friction to slow them down...

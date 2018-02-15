@@ -22,10 +22,6 @@ Asteroid::Asteroid(Vector2f position, float radius)
 	spawnAt(position, radius);
 }
 
-Asteroid::~Asteroid()
-{
-}
-
 void Asteroid::spawnAt(Vector2f position, float radius)
 {
 	setOrigin(position);
@@ -73,15 +69,25 @@ sf::Vector2f Asteroid::getMidOffset() const
 	return m_body.getMidOffset();
 }
 
-void Asteroid::drawCurrent(RenderTarget& target, RenderStates states) const
+void Asteroid::draw(RenderTarget& target, RenderStates states) const
 {
 	target.draw(m_body.shape, getTransform());
 }
 
-void Asteroid::updateCurrent(float deltaTime)
+void Asteroid::update(float deltaTime)
 {
-	SpaceEntity::updateCurrent(deltaTime);
+	SpaceEntity::update(deltaTime);
 	rotate(50.f * deltaTime);
+}
+
+Asteroid * Asteroid::getNext() const
+{
+	return m_next;
+}
+
+void Asteroid::setNext(Asteroid* next)
+{
+	m_next = next;
 }
 
 void Asteroid::onDeactivate()

@@ -3,7 +3,7 @@
 #include "State.h"
 #include "Entity.h"
 #include "AsteroidPlayer.h"
-#include "Asteroid.h"
+#include "AsteroidPool.h"
 #include <vector>
 #include <memory>
 #include <SFML/System/NonCopyable.hpp>
@@ -30,8 +30,10 @@ public:
 private:
 
 	AsteroidPlayer m_player;
-	std::vector<std::unique_ptr<Asteroid>> m_asteroids;
+	AsteroidPool m_asteroidPool;
 	pure::ResourceHolder* m_resources;
+
+	std::vector<Asteroid*> m_asteroids;
 
 	template <typename EmbodiedEntity>
 	void clampEntity(EmbodiedEntity& entity)

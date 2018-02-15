@@ -22,7 +22,7 @@ FloatRect WireFrameShape::getGlobalBounds(const Transform& transform) const
 	return temp.getBounds();;
 }
 
-sf::Vector2f WireFrameShape::getMidOffset() const
+Vector2f WireFrameShape::getMidOffset() const
 {
 	return getRectCenter(getLocalBounds());
 }

@@ -18,6 +18,10 @@ public:
 	sf::Vector2f getMidOffset() const;
 
 private:
+	static constexpr float m_radius = 1.f;
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override final;
+
 	sf::CircleShape m_body;
 };
 

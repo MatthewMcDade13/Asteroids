@@ -1,7 +1,8 @@
 #include "stdafx.h"
+#include "Bullet.h"
 #include "SpaceShip.h"
 
-using namespace sf;
+using namespace sf; using namespace std;
 
 SpaceShip::SpaceShip()
 {
@@ -31,22 +32,29 @@ void SpaceShip::spawnAt(Vector2f position)
 	m_body.shape[3] = Vertex(Vector2f(position.x, position.y - 25.f));
 }
 
-sf::FloatRect SpaceShip::getLocalBounds() const
+FloatRect SpaceShip::getLocalBounds() const
 {
 	return m_body.getLocalBounds();
 }
 
-sf::FloatRect SpaceShip::getGlobalBounds() const
+FloatRect SpaceShip::getGlobalBounds() const
 {
 	return m_body.getGlobalBounds(getTransform());
 }
 
-sf::Vector2f SpaceShip::getMidOffset() const
+Vector2f SpaceShip::getMidOffset() const
 {
 	return m_body.getMidOffset();
 }
 
-void SpaceShip::drawCurrent(RenderTarget& target, RenderStates states) const
+unique_ptr<Bullet> SpaceShip::fire() const
+{
+	unique_ptr<Bullet> bullet = make_unique<Bullet>();
+	bullet->setVelocity(getForwardDirection() * m_bulletSpeed);
+	return bullet;
+}
+
+void SpaceShip::draw(RenderTarget& target, RenderStates states) const
 {
 	target.draw(m_body.shape, getTransform());
 }
