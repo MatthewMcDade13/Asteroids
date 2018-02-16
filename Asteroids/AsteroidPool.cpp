@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "AsteroidPool.h"
 
+using namespace std;
 
 AsteroidPool::AsteroidPool()
 {
@@ -15,6 +16,8 @@ AsteroidPool::AsteroidPool()
 		m_asteroids[i].setNext(&m_asteroids[i + 1]);
 	}
 	m_asteroids.back().setNext(nullptr);
+
+	m_activeAsteroids.reserve(m_maxAsteroids);
 }
 
 
@@ -32,6 +35,9 @@ Asteroid* AsteroidPool::create(sf::Vector2f position, float radius)
 
 	m_firstAvailable = asteroid->getNext();
 
+	const int indx = m_activeAsteroids.size();
+	m_activeAsteroids.push_back(make_pair(asteroid, indx));
+
 	return asteroid;
 }
 
@@ -40,5 +46,28 @@ void AsteroidPool::destroy(Asteroid* asteroid)
 	asteroid->deactivate();
 	asteroid->setNext(m_firstAvailable);
 	m_firstAvailable = asteroid;
+
+	auto itr = find_if(m_activeAsteroids.begin(), m_activeAsteroids.end(),
+		[asteroid](auto& a) {
+		return a.first == asteroid;
+	});
+
+	m_activeAsteroids.erase(itr);
+}
+
+void AsteroidPool::destroy(int asteroidIndx)
+{
+	Asteroid* asteroid = m_activeAsteroids[asteroidIndx].first;
+
+	asteroid->deactivate();
+	asteroid->setNext(m_firstAvailable);
+	m_firstAvailable = asteroid;
+
+	m_activeAsteroids.erase(m_activeAsteroids.begin() + asteroidIndx);
+}
+
+const std::vector<std::pair<Asteroid*, int>>& AsteroidPool::getActiveAsteroids() const
+{
+	return m_activeAsteroids;
 }
 

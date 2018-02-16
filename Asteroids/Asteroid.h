@@ -7,14 +7,9 @@ class Asteroid final : public SpaceEntity
 {
 public:
 	friend class AsteroidPool;
-	void spawnAt(sf::Vector2f position, float radius);
-
 	// Stores given speed and sets velocity equal to speed
 	void setSpeed(float speed);
 	virtual void update(float deltaTime) final override;
-
-	Asteroid* getNext() const;
-	void setNext(Asteroid* next);
 
 	sf::FloatRect getLocalBounds() const;
 	sf::FloatRect getGlobalBounds() const;
@@ -31,8 +26,12 @@ private:
 	Asteroid(sf::Vector2f position, float radius);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const final override;
-
 	virtual void onDeactivate() final override;
+
+	Asteroid* getNext() const;
+	void setNext(Asteroid* next);
+
+	void spawnAt(sf::Vector2f position, float radius);
 
 };
 

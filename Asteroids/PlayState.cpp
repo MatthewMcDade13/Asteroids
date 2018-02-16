@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Random.h"
+#include <utility>
 #include "StateManager.h"
 #include "GameState.h"
 #include "PlayState.h"
@@ -25,8 +26,9 @@ void PlayState::update(float deltaTime)
 	m_player.getShip().update(deltaTime);
 	clampEntity(m_player.getShip());
 
-	for (Asteroid* ast : m_asteroids)
+	for (auto& a : getAsteroids())
 	{
+		Asteroid* ast = a.first;
 		ast->update(deltaTime);
 		clampEntity(*ast);
 	}
@@ -36,8 +38,9 @@ void PlayState::draw(sf::RenderWindow& window)
 {
 	window.draw(m_player.getShip());
 
-	for (Asteroid* ast : m_asteroids)
+	for (auto& a : getAsteroids())
 	{
+		Asteroid* ast = a.first;
 		window.draw(*ast);
 	}
 }
@@ -61,7 +64,6 @@ void PlayState::onCreate()
 
 		ast->setSpeed(asteroidSpeed);
 		ast->setVelocity(Vector2f(asteroidSpeed * rand(-1.f, 1.f), asteroidSpeed * rand(-1.f, 1.f)));
-		m_asteroids.push_back(ast);
 	}
 }
 
@@ -69,6 +71,11 @@ void PlayState::onCreate()
 const sf::RenderWindow& PlayState::getWindow() const
 {
 	return m_stateManager->getWindow();
+}
+
+const std::vector<std::pair<Asteroid*, int>> PlayState::getAsteroids() const
+{
+	return m_asteroidPool.getActiveAsteroids();
 }
 
 void PlayState::handleInput(const sf::Event& event)

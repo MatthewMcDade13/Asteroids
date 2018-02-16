@@ -33,8 +33,6 @@ private:
 	AsteroidPool m_asteroidPool;
 	pure::ResourceHolder* m_resources;
 
-	std::vector<Asteroid*> m_asteroids;
-
 	template <typename EmbodiedEntity>
 	void clampEntity(EmbodiedEntity& entity)
 	{
@@ -59,6 +57,7 @@ private:
 	}
 
 	const sf::RenderWindow& getWindow() const;
+	const std::vector<std::pair<Asteroid*, int>> getAsteroids() const;
 
 	virtual void handleInput(const sf::Event& event) final override;
 	
