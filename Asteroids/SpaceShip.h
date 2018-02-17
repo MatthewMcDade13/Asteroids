@@ -32,7 +32,7 @@ public:
 	void fire(Bullet* bullet) const;
 
 private:
-	static constexpr float m_bulletSpeed = 100.f;
+	static constexpr float m_bulletSpeed = 500.f;
 	WireFrameShape m_body;
 	// Draws the current Scene Node.
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const final override;

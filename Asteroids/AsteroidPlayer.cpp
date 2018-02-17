@@ -55,18 +55,14 @@ void AsteroidPlayer::setupKeybinds()
 	});
 
 	bindKey(Keyboard::Space, [this](float dt) {
-		auto time = chrono::system_clock::now().time_since_epoch();
 
-		bool canFire = (time.count() - m_lastFireTime) >= m_fireCooldown;
-
-		dbLog("ELAPSED TIME: ", (time.count() - (long long)m_lastFireTime));
+		bool canFire = (m_fireTimer.getElapsedTime().asSeconds() - m_lastFireTime) >= m_fireCooldown;
 
 		if (canFire)
 		{
 			Bullet* bullet = m_bulletPool->create();
 			m_spaceShip.fire(bullet);
-			time = chrono::system_clock::now().time_since_epoch();
-			m_lastFireTime = time.count();
+			m_lastFireTime = m_fireTimer.getElapsedTime().asSeconds();
 		}
 	});
 }

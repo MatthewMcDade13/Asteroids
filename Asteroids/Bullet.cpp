@@ -2,6 +2,7 @@
 #include "GetRectCenter.h"
 #include "Bullet.h"
 #include "ObjectPool.h"
+#include "Asteroid.h"
 #include "DebugLog.h"
 
 using namespace sf;
@@ -38,6 +39,16 @@ void Bullet::update(float deltaTime)
 sf::Vector2f Bullet::getMidOffset() const
 {
 	return getRectCenter(m_body.getLocalBounds());
+}
+
+bool Bullet::detectCollision(Asteroid* ast) const
+{
+	if (ast->getGlobalBounds().intersects(m_body.getGlobalBounds()))
+	{
+		dbLog("COLLISION HIT");
+		return true;
+	}
+	return false;
 }
 
 void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const

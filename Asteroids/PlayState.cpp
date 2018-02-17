@@ -51,6 +51,16 @@ void PlayState::update(float deltaTime)
 
 		clampEntity(*bullet);
 	}
+
+	for (int i = (int)bullets.size() - 1; i >= 0; i--)
+	{
+		Bullet* bullet = bullets[i];
+		
+		for (Asteroid* ast : getAsteroids())
+		{
+			bullet->detectCollision(ast);
+		}
+	}
 }
 
 void PlayState::draw(sf::RenderWindow& window)

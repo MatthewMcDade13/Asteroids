@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chrono>
+#include <SFML/System/Clock.hpp>
 #include "Player.h"
 #include "SpaceShip.h"
 #include "Bullet.h"
@@ -26,12 +26,12 @@ public:
 private:
 	static constexpr float m_fireCooldown = 0.5f;
 
+	sf::Clock m_fireTimer;
 	SpaceShip m_spaceShip;
 	ObjectPool<PBullet>* m_bulletPool;
 
 	float m_rotationSpeed;
 	float m_movementSpeed;
-
 	float m_lastFireTime;
 };
 

@@ -51,7 +51,6 @@ Vector2f SpaceShip::getMidOffset() const
 void SpaceShip::fire(Bullet* bullet) const
 {
 	bullet->spawnAt(getPosition());
-	//dbLog("POSITION: ", getPosition(), " ", "VELOCITY: ", (getForwardDirection() * m_bulletSpeed));
 	bullet->setVelocity(getForwardDirection() * m_bulletSpeed);
 }
 

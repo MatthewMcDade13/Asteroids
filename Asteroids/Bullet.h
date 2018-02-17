@@ -7,6 +7,8 @@
 template <typename T>
 class ObjectPool;
 
+class Asteroid;
+
 class Bullet : public SpaceEntity
 {
 public:
@@ -18,6 +20,7 @@ public:
 
 	// Gets the distance between center of entity and left (x) and top (y) 
 	sf::Vector2f getMidOffset() const;
+	bool detectCollision(Asteroid* ast) const;
 
 protected:
 	Bullet();
@@ -25,7 +28,7 @@ protected:
 private:
 	static constexpr float m_radius = 1.f;
 	// How long all bullets alive for in seconds
-	static constexpr float m_duration = 5.f;
+	static constexpr float m_duration = 1.5f;
 
 	sf::CircleShape m_body;
 	Bullet* m_next;
