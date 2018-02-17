@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bullet.h"
 #include "SpaceShip.h"
+#include "DebugLog.h"
 
 using namespace sf; using namespace std;
 
@@ -47,11 +48,11 @@ Vector2f SpaceShip::getMidOffset() const
 	return m_body.getMidOffset();
 }
 
-unique_ptr<Bullet> SpaceShip::fire() const
+void SpaceShip::fire(Bullet* bullet) const
 {
-	unique_ptr<Bullet> bullet = make_unique<Bullet>();
+	bullet->spawnAt(getPosition());
+	//dbLog("POSITION: ", getPosition(), " ", "VELOCITY: ", (getForwardDirection() * m_bulletSpeed));
 	bullet->setVelocity(getForwardDirection() * m_bulletSpeed);
-	return bullet;
 }
 
 void SpaceShip::draw(RenderTarget& target, RenderStates states) const

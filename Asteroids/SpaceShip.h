@@ -29,7 +29,7 @@ public:
 	sf::FloatRect getGlobalBounds() const;
 	sf::Vector2f getMidOffset() const;
 
-	std::unique_ptr<Bullet> fire() const;
+	void fire(Bullet* bullet) const;
 
 private:
 	static constexpr float m_bulletSpeed = 100.f;

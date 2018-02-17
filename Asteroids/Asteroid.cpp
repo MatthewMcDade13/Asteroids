@@ -80,16 +80,6 @@ void Asteroid::update(float deltaTime)
 	rotate(50.f * deltaTime);
 }
 
-Asteroid * Asteroid::getNext() const
-{
-	return m_next;
-}
-
-void Asteroid::setNext(Asteroid* next)
-{
-	m_next = next;
-}
-
 void Asteroid::onDeactivate()
 {
 	m_body.shape.clear();

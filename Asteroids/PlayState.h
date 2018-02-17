@@ -3,7 +3,10 @@
 #include "State.h"
 #include "Entity.h"
 #include "AsteroidPlayer.h"
-#include "AsteroidPool.h"
+#include "Asteroid.h"
+#include "ObjectPool.h"
+#include "Bullet.h"
+#include "DebugLog.h"
 #include <vector>
 #include <memory>
 #include <SFML/System/NonCopyable.hpp>
@@ -30,7 +33,9 @@ public:
 private:
 
 	AsteroidPlayer m_player;
-	AsteroidPool m_asteroidPool;
+	ObjectPool<PAsteroid> m_asteroidPool;
+	ObjectPool<PBullet> m_bulletPool;
+
 	pure::ResourceHolder* m_resources;
 
 	template <typename EmbodiedEntity>
@@ -57,7 +62,9 @@ private:
 	}
 
 	const sf::RenderWindow& getWindow() const;
-	const std::vector<std::pair<Asteroid*, int>> getAsteroids() const;
+	const std::vector<PAsteroid*> getAsteroids() const;
+
+	const std::vector<PBullet*> getBullets() const;
 
 	virtual void handleInput(const sf::Event& event) final override;
 	
