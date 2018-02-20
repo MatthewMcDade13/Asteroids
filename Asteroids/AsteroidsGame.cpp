@@ -4,6 +4,7 @@
 #include "ResourceHolder.h"
 #include "PlayState.h"
 #include "PausedState.h"
+#include "GameOverState.h"
 #include "GameState.h"
 #include "DebugLog.h"
 #include "AsteroidsGame.h"
@@ -32,12 +33,16 @@ void AsteroidsGame::onGameStart()
 		return make_unique<PausedState>(manager, &m_resources);
 	});
 
+	m_stateManager.registerState(GameState::GameOver, [this](StateManager* manager) {
+		return make_unique<GameOverState>(manager, &m_resources);
+	});
+
 	m_stateManager.pushState(GameState::Playing);
 	m_resources.fontManager.load("ARCADE_N.TTF");
 
 	m_window.setVerticalSyncEnabled(true);
 	//setFrameTime(75); // set frametime(fps) for fixed update step to be the same as monitor refresh rate
-	setFPS(true);
+	//setFPS(true);
 	
 }
 

@@ -14,9 +14,15 @@ public:
 	AsteroidPlayer(ObjectPool<PBullet>* bulletPool);
 	~AsteroidPlayer();
 
-	void spawn(sf::Vector2f position);
-
 	SpaceShip& getShip();
+	int getLivesLeft() const;
+
+	void spawn(sf::Vector2f position);
+	void die();
+	void reset();
+
+	bool isAlive() const;
+	bool canRespawn() const;
 
 	// Handles single polled sfml events
 	virtual void handleEvent(const sf::Event& event) final override;
@@ -24,7 +30,8 @@ public:
 	virtual void setupKeybinds() final override;
 
 private:
-	static constexpr float m_fireCooldown = 0.5f;
+	static constexpr float m_fireCooldown = 0.3f;
+	static constexpr int m_startLives = 4;
 
 	sf::Clock m_fireTimer;
 	SpaceShip m_spaceShip;
@@ -33,5 +40,6 @@ private:
 	float m_rotationSpeed;
 	float m_movementSpeed;
 	float m_lastFireTime;
+	int m_lives;
 };
 

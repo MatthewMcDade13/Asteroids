@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <memory>
+#include <SFML/System/NonCopyable.hpp>
 #include "State.h"
 #include "Entity.h"
 #include "AsteroidPlayer.h"
@@ -7,9 +10,7 @@
 #include "ObjectPool.h"
 #include "Bullet.h"
 #include "DebugLog.h"
-#include <vector>
-#include <memory>
-#include <SFML/System/NonCopyable.hpp>
+#include "Random.h"
 
 namespace pure
 {
@@ -37,6 +38,7 @@ private:
 	ObjectPool<PBullet> m_bulletPool;
 
 	pure::ResourceHolder* m_resources;
+	int m_numStartAsteroids;
 
 	template <typename EmbodiedEntity>
 	void clampEntity(EmbodiedEntity& entity)
@@ -62,11 +64,15 @@ private:
 	}
 
 	const sf::RenderWindow& getWindow() const;
-	const std::vector<PAsteroid*> getAsteroids() const;
+	const std::vector<PAsteroid*>& getAsteroids() const;
 
-	const std::vector<PBullet*> getBullets() const;
+	const std::vector<PBullet*>& getBullets() const;
 
 	virtual void handleInput(const sf::Event& event) final override;
-	
+	virtual void onActivate() final override;
+
+	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
+
+	void reset();
 };
 

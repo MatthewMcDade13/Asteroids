@@ -11,11 +11,12 @@ using namespace std;
 using namespace pure;
 using namespace sf;
 
-AsteroidPlayer::AsteroidPlayer(ObjectPool<PBullet>* bulletPool):
+AsteroidPlayer::AsteroidPlayer(ObjectPool<PBullet>* bulletPool) :
 	m_spaceShip(),
 	m_bulletPool(bulletPool),
 	m_rotationSpeed(200.f),
-	m_movementSpeed(250.f)
+	m_movementSpeed(250.f),
+	m_lives(m_startLives)
 {
 }
 
@@ -25,12 +26,43 @@ AsteroidPlayer::~AsteroidPlayer()
 
 void AsteroidPlayer::spawn(Vector2f position)
 {
-	m_spaceShip.spawnAt(position);
+	if (canRespawn())
+	{
+		m_spaceShip.activate();
+		m_spaceShip.spawnAt(position);
+	}
+}
+
+void AsteroidPlayer::die()
+{
+	m_lives--;
+	m_spaceShip.deactivate();
+}
+
+void AsteroidPlayer::reset()
+{
+	m_lives = m_startLives;
+	if (isAlive()) m_spaceShip.deactivate();
+}
+
+bool AsteroidPlayer::isAlive() const
+{
+	return m_spaceShip.isActive();
+}
+
+bool AsteroidPlayer::canRespawn() const
+{
+	return m_lives > 0;
 }
 
 SpaceShip& AsteroidPlayer::getShip()
 {
 	return m_spaceShip;
+}
+
+int AsteroidPlayer::getLivesLeft() const
+{
+	return m_lives;
 }
 
 void AsteroidPlayer::handleEvent(const Event& event)
@@ -55,7 +87,6 @@ void AsteroidPlayer::setupKeybinds()
 	});
 
 	bindKey(Keyboard::Space, [this](float dt) {
-
 		bool canFire = (m_fireTimer.getElapsedTime().asSeconds() - m_lastFireTime) >= m_fireCooldown;
 
 		if (canFire)

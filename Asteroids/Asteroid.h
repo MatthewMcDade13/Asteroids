@@ -10,17 +10,25 @@ class ObjectPool;
 class Asteroid : public SpaceEntity
 {
 public:
-	//friend class AsteroidPool;
-	//friend ObjectPool<PAsteroid>;
-	// Stores given speed and sets velocity equal to speed
-	void setSpeed(float speed);
+
+	enum class Size
+	{
+		Microscopic = 0, // Irrelvant, only used for overflows / nonexistant asteroids
+		Small = 10,
+		Medium = 20,
+		Large = 30
+	};
+
 	virtual void update(float deltaTime) final override;
 
+	// Gets size as an enum. (Underlying value is int as radius)
+	Asteroid::Size getSize() const;
 	sf::FloatRect getLocalBounds() const;
 	sf::FloatRect getGlobalBounds() const;
 	sf::Vector2f getMidOffset() const;
 
-	void spawnAt(sf::Vector2f position, float radius);
+	void spawnAt(sf::Vector2f position, Asteroid::Size size);
+	bool detectCollision(class SpaceShip* spaceship);
 
 protected:
 	Asteroid();
@@ -28,13 +36,28 @@ protected:
 private:
 	static constexpr int m_vertCount = 30;
 
+	enum class Speed
+	{
+		Still = 0,
+		Slow = 150,
+		Medium = 250,
+		Fast = 300
+	};
+
+	friend Asteroid::Speed& operator--(Asteroid::Speed& s);
+	friend Asteroid::Speed& operator++(Asteroid::Speed& s);
+
 	WireFrameShape m_body;
-	float m_speed;
+	Speed m_activeSpeed;
+	Asteroid::Size m_size;
 
 	Asteroid(sf::Vector2f position, float radius);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const final override;
 	virtual void onDeactivate() final override;
 };
+
+Asteroid::Size& operator--(Asteroid::Size& s);
+Asteroid::Size& operator++(Asteroid::Size& s);
 
 typedef Poolable<Asteroid> PAsteroid;

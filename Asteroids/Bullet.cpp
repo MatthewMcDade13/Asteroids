@@ -9,20 +9,21 @@ using namespace sf;
 
 Bullet::Bullet():
 	m_body(),
-	m_next(nullptr),
 	m_timeActive(0.f)
 {
 	m_body.setFillColor(Color::White);
 	m_body.setRadius(m_radius);
-	FloatRect bounds = m_body.getLocalBounds();
+	const FloatRect bounds = m_body.getLocalBounds();
 	m_body.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }
 
 void Bullet::spawnAt(sf::Vector2f position)
 {
-	setPosition(position);
 	setOrigin(position);
+	setPosition(position);
+
 	m_body.setPosition(position);
+
 }
 
 bool Bullet::isExpired() const
@@ -36,22 +37,22 @@ void Bullet::update(float deltaTime)
 	m_timeActive += deltaTime;
 }
 
-sf::Vector2f Bullet::getMidOffset() const
+Vector2f Bullet::getMidOffset() const
 {
 	return getRectCenter(m_body.getLocalBounds());
 }
 
-bool Bullet::detectCollision(Asteroid* ast) const
+FloatRect Bullet::getGlobalBounds() const
 {
-	if (ast->getGlobalBounds().intersects(m_body.getGlobalBounds()))
-	{
-		dbLog("COLLISION HIT");
-		return true;
-	}
-	return false;
+	return getTransform().transformRect(m_body.getGlobalBounds());
 }
 
-void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
+bool Bullet::detectCollision(Asteroid* ast) const
+{
+	return ast->getGlobalBounds().intersects(getGlobalBounds());
+}
+
+void Bullet::draw(RenderTarget& target, RenderStates states) const
 {
 	target.draw(m_body, getTransform());
 }
@@ -59,5 +60,4 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void Bullet::onDeactivate()
 {
 	m_timeActive = 0.f;
-	
 }

@@ -20,6 +20,7 @@ public:
 
 	// Gets the distance between center of entity and left (x) and top (y) 
 	sf::Vector2f getMidOffset() const;
+	sf::FloatRect getGlobalBounds() const;
 	bool detectCollision(Asteroid* ast) const;
 
 protected:
@@ -31,7 +32,6 @@ private:
 	static constexpr float m_duration = 1.5f;
 
 	sf::CircleShape m_body;
-	Bullet* m_next;
 	float m_timeActive;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override final;

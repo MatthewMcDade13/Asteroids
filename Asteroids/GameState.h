@@ -6,7 +6,8 @@ struct GameState
 	{
 		Menu,
 		Playing,
-		Paused
+		Paused,
+		GameOver
 	};
 private:
 	GameState() = delete;

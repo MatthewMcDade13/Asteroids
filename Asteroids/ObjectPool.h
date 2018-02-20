@@ -42,13 +42,15 @@ public:
 
 	void destroy(T* object)
 	{
+		using namespace std;
+
 		object->deactivate();
 		object->setNext(m_firstAvailable);
 
 		m_firstAvailable = object;
 
 		auto itr = find_if(m_activeObjects.begin(), m_activeObjects.end(),
-			[object](auto& o) {
+			[object](T* o) {
 			return o == object;
 		});
 
@@ -69,6 +71,13 @@ public:
 	const std::vector<T*>& getActiveObjects() const
 	{
 		return m_activeObjects;
+	}
+
+	// Destroy and set all active objects to not active state
+	void reset()
+	{
+		for (int i = (int)m_activeObjects.size() - 1; i >= 0; i--)
+			destroy(i);
 	}
 
 protected:
