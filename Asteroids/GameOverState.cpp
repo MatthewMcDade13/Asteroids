@@ -53,8 +53,8 @@ void GameOverState::onCreate()
 		m_gameOverText.setOrigin(goSize.width / 2, goSize.height / 2);
 		m_resumeText.setOrigin(resSize.width / 2, resSize.height / 2);
 
-		m_gameOverText.setPosition(winSize.x / 2, (winSize.y / 2) - 150);
-		m_resumeText.setPosition(winSize.x / 2, (winSize.y / 2) + 150);
+		m_gameOverText.setPosition((float)winSize.x / 2.f, ((float)winSize.y / 2.f) - 150.f);
+		m_resumeText.setPosition((float)winSize.x / 2.f, ((float)winSize.y / 2.f) + 150.f);
 	}
 
 	m_background.setFillColor(Color(0, 0, 0, 120));

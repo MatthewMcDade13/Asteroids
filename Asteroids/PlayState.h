@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include "State.h"
 #include "Entity.h"
 #include "AsteroidPlayer.h"
@@ -33,12 +34,18 @@ public:
 
 private:
 
+	static constexpr int m_playerStartLives = 4;
+
 	AsteroidPlayer m_player;
 	ObjectPool<PAsteroid> m_asteroidPool;
 	ObjectPool<PBullet> m_bulletPool;
 
 	pure::ResourceHolder* m_resources;
+	int m_playerScore;
+	sf::Text m_scoreText;
+
 	int m_numStartAsteroids;
+	int m_playerLives;
 
 	template <typename EmbodiedEntity>
 	void clampEntity(EmbodiedEntity& entity)
@@ -68,10 +75,13 @@ private:
 
 	const std::vector<PBullet*>& getBullets() const;
 
+	bool canPlayerRespawn() const;
+
 	virtual void handleInput(const sf::Event& event) final override;
 	virtual void onActivate() final override;
 
 	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
+	void calcPlayerScore(Asteroid::Size astSize);
 
 	void reset();
 };

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Asteroids", "Asteroids\Asteroids.vcxproj", "{44E1A71C-751C-4D46-A656-6D35D1B7ED4C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PureEngine", "PureEngine\PureEngine\PureEngine.vcxproj", "{44E33856-35A4-4924-B871-CC2B34BF62FF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PureEngine", "..\PureEngineLib\PureEngine\PureEngine.vcxproj", "{44E33856-35A4-4924-B871-CC2B34BF62FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

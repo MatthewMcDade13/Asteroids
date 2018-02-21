@@ -15,8 +15,7 @@ AsteroidPlayer::AsteroidPlayer(ObjectPool<PBullet>* bulletPool) :
 	m_spaceShip(),
 	m_bulletPool(bulletPool),
 	m_rotationSpeed(200.f),
-	m_movementSpeed(250.f),
-	m_lives(m_startLives)
+	m_movementSpeed(250.f)
 {
 }
 
@@ -26,23 +25,18 @@ AsteroidPlayer::~AsteroidPlayer()
 
 void AsteroidPlayer::spawn(Vector2f position)
 {
-	if (canRespawn())
-	{
-		m_spaceShip.activate();
-		m_spaceShip.spawnAt(position);
-	}
+	m_spaceShip.activate();
+	m_spaceShip.spawnAt(position);
 }
 
 void AsteroidPlayer::die()
 {
-	m_lives--;
 	m_spaceShip.deactivate();
 }
 
 void AsteroidPlayer::reset()
 {
-	m_lives = m_startLives;
-	if (isAlive()) m_spaceShip.deactivate();
+	m_spaceShip.deactivate();
 }
 
 bool AsteroidPlayer::isAlive() const
@@ -50,20 +44,25 @@ bool AsteroidPlayer::isAlive() const
 	return m_spaceShip.isActive();
 }
 
-bool AsteroidPlayer::canRespawn() const
-{
-	return m_lives > 0;
-}
+//bool AsteroidPlayer::canRespawn() const
+//{
+//	return m_lives > 0;
+//}
+//
+//void AsteroidPlayer::grantLife()
+//{
+//	m_lives++;
+//}
 
 SpaceShip& AsteroidPlayer::getShip()
 {
 	return m_spaceShip;
 }
 
-int AsteroidPlayer::getLivesLeft() const
-{
-	return m_lives;
-}
+//int AsteroidPlayer::getLivesLeft() const
+//{
+//	return m_lives;
+//}
 
 void AsteroidPlayer::handleEvent(const Event& event)
 {

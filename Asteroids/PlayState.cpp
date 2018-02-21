@@ -3,6 +3,7 @@
 #include "Random.h"
 #include <utility>
 #include <assert.h>
+#include "ResourceHolder.h"
 #include "StateManager.h"
 #include "GameOverState.h"
 #include "GameState.h"
@@ -17,7 +18,8 @@ PlayState::PlayState(StateManager* manager, ResourceHolder* resources):
 	m_asteroidPool(255),
 	m_bulletPool(100),
 	m_resources(resources),
-	m_numStartAsteroids(0)
+	m_numStartAsteroids(0),
+	m_playerLives(m_playerStartLives)
 {
 }
 
@@ -28,7 +30,7 @@ PlayState::~PlayState()
 void PlayState::update(float deltaTime)
 {
 
-	if (!m_player.canRespawn())
+	if (!canPlayerRespawn())
 	{
 		reset();
 		m_stateManager->pushState(GameState::GameOver);
@@ -40,10 +42,11 @@ void PlayState::update(float deltaTime)
 	{
 		m_numStartAsteroids += 2;
 		const Random rand;
-		const Vector2u winSize = getWindow().getSize();
+		const Vector2f winSize((float)getWindow().getSize().x, (float)getWindow().getSize().y);
 
 		for (int i = 0; i < m_numStartAsteroids; i++)
 		{
+			// TODO: Make asteroids spawn on outer rim of screen or near edge of screen.
 			Asteroid* ast = m_asteroidPool.create();
 			ast->spawnAt(Vector2f(rand((float)winSize.x), rand((float)winSize.y)), Asteroid::Size::Large);
 		}
@@ -81,28 +84,31 @@ void PlayState::update(float deltaTime)
 		clampEntity(*bullet);
 	}
 
-	for (int i = (int)bullets.size() - 1; i >= 0; i--)
-	{
-		Bullet* bullet = bullets[i];
+	const vector<PAsteroid*>& asteroids = getAsteroids();
 
-		for (int j = 0; j < (int)getAsteroids().size(); j++)
+	for (int i = (int)asteroids.size() - 1; i >= 0; i--)
+	{
+		Asteroid* ast = asteroids[i];
+		for (int j = (int)bullets.size() - 1; j >= 0; j--)
 		{
-			Asteroid* ast = getAsteroids()[j];
+			Bullet* bullet = bullets[j];
 			if (bullet->detectCollision(ast))
 			{
-				m_bulletPool.destroy(i);
-				destroyAsteroid(static_cast<PAsteroid*>(ast), j);
+				m_bulletPool.destroy(j);
+				destroyAsteroid(static_cast<PAsteroid*>(ast), i);
 				break;
 			}
 		}
-	}
 
-	if (!m_player.isAlive()) return;
-	for (Asteroid* ast : getAsteroids())
-	{
+		if (!m_player.isAlive()) continue;
+
 		if (ast->detectCollision(&m_player.getShip()))
 		{
 			m_player.die();
+			m_playerLives--;
+
+			if (ast->getSize() == Asteroid::Size::Small)
+				destroyAsteroid(static_cast<PAsteroid*>(ast), i);
 		}
 	}
 
@@ -121,11 +127,20 @@ void PlayState::draw(sf::RenderWindow& window)
 	{
 		window.draw(*bullet);
 	}
+
+	window.draw(m_scoreText);
 }
 
 void PlayState::onCreate()
 {
 	m_player.setupKeybinds();
+	m_scoreText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
+	m_scoreText.setCharacterSize(24);
+	m_scoreText.setString(to_string(m_playerScore)); // initially 0
+
+	const FloatRect textSize = m_scoreText.getLocalBounds();
+	m_scoreText.setOrigin(textSize.width / 2.f, textSize.height / 2.f);
+	m_scoreText.setPosition(250.f, 15.f);
 }
 
 
@@ -145,6 +160,11 @@ const std::vector<PBullet*>& PlayState::getBullets() const
 	return m_bulletPool.getActiveObjects();
 }
 
+bool PlayState::canPlayerRespawn() const
+{
+	return m_playerLives > 0;
+}
+
 void PlayState::handleInput(const sf::Event& event)
 {
 	if (event.type == Event::KeyReleased)
@@ -155,10 +175,10 @@ void PlayState::handleInput(const sf::Event& event)
 		}
 		if (event.key.code == Keyboard::Return)
 		{
-			if (!m_player.isAlive() && m_player.canRespawn())
+			if (!m_player.isAlive() && canPlayerRespawn())
 			{
 				const Vector2u winSize = getWindow().getSize();
-				m_player.spawn(Vector2f(winSize.x / 2, winSize.y / 2));
+				m_player.spawn(Vector2f((float)winSize.x / 2.f, (float)winSize.y / 2.f));
 			}
 		}	
 
@@ -182,6 +202,12 @@ void PlayState::onActivate()
 void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 {
 	Asteroid::Size size = ast->getSize();
+
+	calcPlayerScore(size);
+	m_scoreText.setString(to_string(m_playerScore));
+
+	if (m_playerScore % 10000 == 0) m_playerLives++;
+
 	--size;
 	const Random rand;
 
@@ -206,9 +232,24 @@ void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 	}
 }
 
+void PlayState::calcPlayerScore(Asteroid::Size astSize)
+{
+	// Scores taken from Atari Asteroid Manual found here
+	// https://atariage.com/manual_html_page.php?SoftwareID=828
+
+	switch (astSize)
+	{
+		case Asteroid::Size::Large:  m_playerScore += 20;  break;
+		case Asteroid::Size::Medium: m_playerScore += 50;  break;
+		case Asteroid::Size::Small:  m_playerScore += 100; break;
+	}
+}
+
 void PlayState::reset()
 {
 	m_numStartAsteroids = 0;
+	m_playerLives = m_playerStartLives;
+	m_playerScore = 0;
 	m_bulletPool.reset();
 	m_player.reset();
 }

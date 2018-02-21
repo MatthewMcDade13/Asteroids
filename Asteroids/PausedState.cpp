@@ -43,7 +43,7 @@ void PausedState::onCreate()
 		const FloatRect textSize = m_pauseText.getLocalBounds();
 
 		m_pauseText.setOrigin(textSize.width / 2, textSize.height / 2);
-		m_pauseText.setPosition(winSize.x / 2, winSize.y / 2);
+		m_pauseText.setPosition((float)winSize.x / 2.f, (float)winSize.y / 2.f);
 	}
 
 	m_background.setFillColor(Color(0, 0, 0, 120));

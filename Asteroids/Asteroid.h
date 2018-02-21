@@ -11,7 +11,7 @@ class Asteroid : public SpaceEntity
 {
 public:
 
-	enum class Size
+	enum class Size : int
 	{
 		Microscopic = 0, // Irrelvant, only used for overflows / nonexistant asteroids
 		Small = 10,
@@ -36,7 +36,7 @@ protected:
 private:
 	static constexpr int m_vertCount = 30;
 
-	enum class Speed
+	enum class Speed : int
 	{
 		Still = 0,
 		Slow = 150,

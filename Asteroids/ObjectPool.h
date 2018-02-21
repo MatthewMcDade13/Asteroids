@@ -34,7 +34,6 @@ public:
 
 		m_firstAvailable = obj->getNext();
 
-		const int indx = m_activeObjects.size();
 		m_activeObjects.push_back(obj);
 
 		return obj;
