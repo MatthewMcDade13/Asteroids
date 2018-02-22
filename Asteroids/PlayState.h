@@ -43,6 +43,7 @@ private:
 	pure::ResourceHolder* m_resources;
 	int m_playerScore;
 	sf::Text m_scoreText;
+	sf::Text m_livesText;
 
 	int m_numStartAsteroids;
 	int m_playerLives;
@@ -82,6 +83,8 @@ private:
 
 	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
 	void calcPlayerScore(Asteroid::Size astSize);
+	void updateLivesDisplay();
+	void updateScoreDisplay();
 
 	void reset();
 };

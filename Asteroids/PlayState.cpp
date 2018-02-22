@@ -3,6 +3,7 @@
 #include "Random.h"
 #include <utility>
 #include <assert.h>
+#include "Constants.h"
 #include "ResourceHolder.h"
 #include "StateManager.h"
 #include "GameOverState.h"
@@ -31,11 +32,7 @@ void PlayState::update(float deltaTime)
 {
 
 	if (!canPlayerRespawn())
-	{
-		reset();
 		m_stateManager->pushState(GameState::GameOver);
-		return;
-	}
 
 
 	if (getAsteroids().size() == 0)
@@ -106,6 +103,7 @@ void PlayState::update(float deltaTime)
 		{
 			m_player.die();
 			m_playerLives--;
+			updateLivesDisplay();
 
 			if (ast->getSize() == Asteroid::Size::Small)
 				destroyAsteroid(static_cast<PAsteroid*>(ast), i);
@@ -129,18 +127,31 @@ void PlayState::draw(sf::RenderWindow& window)
 	}
 
 	window.draw(m_scoreText);
+	window.draw(m_livesText);
 }
 
 void PlayState::onCreate()
 {
 	m_player.setupKeybinds();
-	m_scoreText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
-	m_scoreText.setCharacterSize(24);
-	m_scoreText.setString(to_string(m_playerScore)); // initially 0
+	float winSizeX = (float)getWindow().getSize().x;
 
-	const FloatRect textSize = m_scoreText.getLocalBounds();
-	m_scoreText.setOrigin(textSize.width / 2.f, textSize.height / 2.f);
-	m_scoreText.setPosition(250.f, 15.f);
+	{
+		m_scoreText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
+		m_scoreText.setCharacterSize(24);
+		updateScoreDisplay(); // initially 0
+		const FloatRect textSize = m_scoreText.getLocalBounds();
+		m_scoreText.setOrigin(textSize.width / 2.f, textSize.height / 2.f);
+		m_scoreText.setPosition(winSizeX / 4.f, 15.f);
+	}
+
+	{
+		m_livesText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
+		m_livesText.setCharacterSize(24);
+		updateLivesDisplay();
+		const FloatRect textSize = m_livesText.getLocalBounds();
+		m_livesText.setOrigin(textSize.width / 2.f, textSize.height / 2.f);
+		m_livesText.setPosition(winSizeX * 0.75f, 15.f);
+	}
 }
 
 
@@ -189,14 +200,14 @@ void PlayState::handleInput(const sf::Event& event)
 
 void PlayState::onActivate()
 {
+	if (m_stateManager->getCurrentState<GameOverState>())
+		reset();
+
 	if (!m_player.isAlive())
 	{
 		const Vector2u winSize = getWindow().getSize();
 		m_player.spawn(Vector2f(winSize.x / 2.f, winSize.y / 2.f));
 	}
-
-	if (m_stateManager->getCurrentState<GameOverState>())
-		m_asteroidPool.reset();
 }
 
 void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
@@ -204,9 +215,13 @@ void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 	Asteroid::Size size = ast->getSize();
 
 	calcPlayerScore(size);
-	m_scoreText.setString(to_string(m_playerScore));
+	updateScoreDisplay();
 
-	if (m_playerScore % 10000 == 0) m_playerLives++;
+	if (m_playerScore % 10000 == 0)
+	{
+		m_playerLives++;
+		updateLivesDisplay();
+	}
 
 	--size;
 	const Random rand;
@@ -245,12 +260,27 @@ void PlayState::calcPlayerScore(Asteroid::Size astSize)
 	}
 }
 
+void PlayState::updateLivesDisplay()
+{
+	m_livesText.setString("Lives: "s + to_string(m_playerLives));
+}
+
+void PlayState::updateScoreDisplay()
+{
+	m_scoreText.setString("Score: "s + to_string(m_playerScore));
+}
+
 void PlayState::reset()
 {
 	m_numStartAsteroids = 0;
 	m_playerLives = m_playerStartLives;
 	m_playerScore = 0;
+
+	updateScoreDisplay();
+	updateLivesDisplay();
+
 	m_bulletPool.reset();
+	m_asteroidPool.reset();
 	m_player.reset();
 }
 
