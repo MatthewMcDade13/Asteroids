@@ -5,6 +5,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Audio/Music.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "State.h"
 #include "Entity.h"
 #include "Explosion.h"
@@ -58,6 +59,8 @@ private:
 	template <typename EmbodiedEntity>
 	void clampEntity(EmbodiedEntity& entity)
 	{
+		using namespace sf;
+
 		const Vector2f offset = entity.getMidOffset();
 
 		if (entity.getPosition().x + offset.x < 0)

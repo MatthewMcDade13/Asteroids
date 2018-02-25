@@ -22,7 +22,7 @@ public:
 	virtual void draw(sf::RenderWindow& window)  final override;
 
 private:
-	::Context* m_ctx;
+	Context* m_ctx;
 	sf::Text m_pauseText;
 	sf::Text m_settingsText;
 	sf::RectangleShape m_background;
