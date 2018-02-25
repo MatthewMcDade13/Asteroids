@@ -51,9 +51,34 @@ void PlayState::update(float deltaTime)
 
 		for (int i = 0; i < m_numStartAsteroids; i++)
 		{
-			// TODO: Make asteroids spawn on outer rim of screen or near edge of screen.
 			Asteroid* ast = m_asteroidPool.create();
-			ast->spawnAt(Vector2f(rand((float)winSize.x), rand((float)winSize.y)), Asteroid::Size::Large);
+
+			// Spawn asteroid somewhere on the edge of the screen
+
+			const pair<float, float> smallRangeX = { 0.f, (float)winSize.x * .25f };
+			const pair<float, float> largeRangeX = { (float)winSize.x * .75f, winSize.x };
+			const pair<float, float> smallRangeY = { 0.f, (float)winSize.y * .25f };
+			const pair<float, float> largeRangeY = { (float)winSize.y * .75f, winSize.y };
+
+			const pair<float, float> xRangeSize = { (smallRangeX.second - smallRangeX.first), (largeRangeX.second - largeRangeX.first) };
+			const pair<float, float> yRangeSize = { (smallRangeY.second - smallRangeY.first), (largeRangeY.second - largeRangeY.first) };
+
+			const float xRangeSum = xRangeSize.first + xRangeSize.second;
+			const float yRangeSum = yRangeSize.first + yRangeSize.second;
+
+			float randX = rand(xRangeSum);
+			if (randX < xRangeSize.first)
+				randX += (smallRangeX.first);
+			else
+				randX += largeRangeX.first - xRangeSize.first;
+
+			float randY = rand(yRangeSum);
+			if (randY < (yRangeSize.first))
+				randY += (smallRangeY.first);
+			else
+				randY += largeRangeY.first - yRangeSize.first;
+
+			ast->spawnAt(Vector2f(randX, randY), Asteroid::Size::Large);
 		}
 	}
 
@@ -150,7 +175,7 @@ void PlayState::onCreate()
 	{
 		m_scoreText.setFont(*m_ctx->resources->fontManager.get(fontPath));
 		m_scoreText.setCharacterSize(24);
-		updateScoreDisplay(); // initially 0
+		updateScoreDisplay(); 
 		const FloatRect textSize = m_scoreText.getLocalBounds();
 		m_scoreText.setOrigin(textSize.width / 2.f, textSize.height / 2.f);
 		m_scoreText.setPosition(winSizeX / 4.f, 15.f);
@@ -223,11 +248,6 @@ void PlayState::onActivate()
 		const Vector2u winSize = getWindow().getSize();
 		m_player.spawn(Vector2f(winSize.x / 2.f, winSize.y / 2.f));
 	}
-}
-
-void PlayState::onDeactivate()
-{
-
 }
 
 void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)

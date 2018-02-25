@@ -51,7 +51,6 @@ void PausedState::updateSettingsText()
 
 	m_settingsText.setOrigin(textSize.width / 2, textSize.height / 2);
 	m_settingsText.setPosition((float)winSize.x / 2.f, (float)winSize.y * .25f);
-	//m_settingsText.setPosition((float)winSize.x / 2.f, (float)winSize.y / 2.f);
 }
 
 void PausedState::onCreate()

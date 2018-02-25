@@ -85,7 +85,6 @@ private:
 
 	virtual void handleInput(const sf::Event& event) final override;
 	virtual void onActivate() final override;
-	virtual void onDeactivate() final override;
 
 	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
 	void calcPlayerScore(Asteroid::Size astSize);
