@@ -26,6 +26,7 @@ PlayState::PlayState(StateManager* manager, ::Context* ctx):
 	m_numStartAsteroids(0),
 	m_playerLives(m_playerStartLives)
 {
+	m_explosions.reserve(10);
 }
 
 PlayState::~PlayState()
@@ -42,7 +43,6 @@ void PlayState::update(float deltaTime)
 	}
 		
 
-
 	if (getAsteroids().size() == 0)
 	{
 		m_numStartAsteroids += 2;
@@ -53,33 +53,18 @@ void PlayState::update(float deltaTime)
 		{
 			Asteroid* ast = m_asteroidPool.create();
 
-			// Spawn asteroid somewhere on the edge of the screen
-
-			const pair<float, float> smallRangeX = { 0.f, (float)winSize.x * .25f };
-			const pair<float, float> largeRangeX = { (float)winSize.x * .75f, winSize.x };
-			const pair<float, float> smallRangeY = { 0.f, (float)winSize.y * .25f };
-			const pair<float, float> largeRangeY = { (float)winSize.y * .75f, winSize.y };
-
-			const pair<float, float> xRangeSize = { (smallRangeX.second - smallRangeX.first), (largeRangeX.second - largeRangeX.first) };
-			const pair<float, float> yRangeSize = { (smallRangeY.second - smallRangeY.first), (largeRangeY.second - largeRangeY.first) };
-
-			const float xRangeSum = xRangeSize.first + xRangeSize.second;
-			const float yRangeSum = yRangeSize.first + yRangeSize.second;
-
-			float randX = rand(xRangeSum);
-			if (randX < xRangeSize.first)
-				randX += (smallRangeX.first);
-			else
-				randX += largeRangeX.first - xRangeSize.first;
-
-			float randY = rand(yRangeSum);
-			if (randY < (yRangeSize.first))
-				randY += (smallRangeY.first);
-			else
-				randY += largeRangeY.first - yRangeSize.first;
-
-			ast->spawnAt(Vector2f(randX, randY), Asteroid::Size::Large);
+			spawnAsteroid(ast);
 		}
+	}
+
+	for (int i = (int)m_explosions.size() - 1; i >= 0; i--)
+	{
+		Explosion& explosion = m_explosions[i];
+
+		if (explosion.isDone())
+			m_explosions.erase(m_explosions.begin() + i);
+		else
+			explosion.update(deltaTime);
 	}
 
 	if (m_player.isAlive())
@@ -157,6 +142,11 @@ void PlayState::draw(sf::RenderWindow& window)
 	for (Bullet* bullet : getBullets())
 	{
 		window.draw(*bullet);
+	}
+
+	for (Explosion& ex : m_explosions)
+	{
+		window.draw(ex);
 	}
 
 	window.draw(m_scoreText);
@@ -278,6 +268,8 @@ void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 	}
 
 	m_ctx->audio->explodeSound.play();
+	m_explosions.emplace_back();
+	m_explosions.back().spawnAt(ast->getPosition());
 	
 	if (astIndx >= 0)
 	{
@@ -287,6 +279,38 @@ void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 	{
 		m_asteroidPool.destroy(ast);
 	}
+}
+
+void PlayState::spawnAsteroid(Asteroid * ast)
+{
+	// Spawn asteroid somewhere on the edge of the screen
+	const Random rand;
+	const Vector2f winSize((float)getWindow().getSize().x, (float)getWindow().getSize().y);
+
+	const pair<float, float> smallRangeX = { 0.f, (float)winSize.x * .25f };
+	const pair<float, float> largeRangeX = { (float)winSize.x * .75f, winSize.x };
+	const pair<float, float> smallRangeY = { 0.f, (float)winSize.y * .25f };
+	const pair<float, float> largeRangeY = { (float)winSize.y * .75f, winSize.y };
+
+	const pair<float, float> xRangeSize = { (smallRangeX.second - smallRangeX.first), (largeRangeX.second - largeRangeX.first) };
+	const pair<float, float> yRangeSize = { (smallRangeY.second - smallRangeY.first), (largeRangeY.second - largeRangeY.first) };
+
+	const float xRangeSum = xRangeSize.first + xRangeSize.second;
+	const float yRangeSum = yRangeSize.first + yRangeSize.second;
+
+	float randX = rand(xRangeSum);
+	if (randX < xRangeSize.first)
+		randX += (smallRangeX.first);
+	else
+		randX += largeRangeX.first - xRangeSize.first;
+
+	float randY = rand(yRangeSum);
+	if (randY < (yRangeSize.first))
+		randY += (smallRangeY.first);
+	else
+		randY += largeRangeY.first - yRangeSize.first;
+
+	ast->spawnAt(Vector2f(randX, randY), Asteroid::Size::Large);
 }
 
 void PlayState::calcPlayerScore(Asteroid::Size astSize)

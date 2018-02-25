@@ -156,6 +156,7 @@
     <ClInclude Include="AsteroidsGame.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="Explosion.h" />
     <ClInclude Include="GameAudio.h" />
     <ClInclude Include="GameOverState.h" />
     <ClInclude Include="GameState.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="AsteroidPlayer.cpp" />
     <ClCompile Include="AsteroidsGame.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameAudio.cpp" />
     <ClCompile Include="GameOverState.cpp" />
     <ClCompile Include="GetRectCenter.cpp" />

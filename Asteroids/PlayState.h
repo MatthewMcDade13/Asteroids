@@ -7,6 +7,7 @@
 #include <SFML/Audio/Music.hpp>
 #include "State.h"
 #include "Entity.h"
+#include "Explosion.h"
 #include "AsteroidPlayer.h"
 #include "Asteroid.h"
 #include "ObjectPool.h"
@@ -42,6 +43,7 @@ private:
 	AsteroidPlayer m_player;
 	ObjectPool<PAsteroid> m_asteroidPool;
 	ObjectPool<PBullet> m_bulletPool;
+	std::vector<Explosion> m_explosions;
 
 	::Context* m_ctx;
 	//pure::ResourceHolder* m_resources;
@@ -87,6 +89,7 @@ private:
 	virtual void onActivate() final override;
 
 	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
+	void spawnAsteroid(Asteroid* ast);
 	void calcPlayerScore(Asteroid::Size astSize);
 	void stopAndResetMusic();
 	void updateLivesDisplay();
