@@ -5,9 +5,11 @@
 #include "ResourceHolder.h"
 #include "StateManager.h"
 #include "GameOverState.h"
+#include "ResourcePaths.h"
 
 using namespace pure;
 using namespace sf;
+using namespace std;
 
 GameOverState::GameOverState(StateManager* manager, ResourceHolder* resources):
 	State(manager),
@@ -36,8 +38,9 @@ void GameOverState::draw(sf::RenderWindow & window)
 void GameOverState::onCreate()
 {
 	const Vector2u winSize = m_stateManager->getWindow().getSize();
+	const string fontPath = getResourcePath(Resource::Font_Arcade);
 
-	if (const Font* gameFont = m_resources->fontManager.get("ARCADE_N.TTF"))
+	if (const Font* gameFont = m_resources->fontManager.get(fontPath))
 	{
 		m_gameOverText.setFont(*gameFont);
 		m_gameOverText.setCharacterSize(69);

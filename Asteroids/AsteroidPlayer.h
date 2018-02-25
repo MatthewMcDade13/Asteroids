@@ -8,10 +8,12 @@
 template <typename T>
 class ObjectPool;
 
+struct GameAudio;
+
 class AsteroidPlayer : public pure::Player
 {
 public:
-	AsteroidPlayer(ObjectPool<PBullet>* bulletPool);
+	AsteroidPlayer(ObjectPool<PBullet>* bulletPool, GameAudio* audio);
 	~AsteroidPlayer();
 
 	SpaceShip& getShip();
@@ -35,6 +37,7 @@ private:
 	static constexpr float m_fireCooldown = 0.3f;
 	//static constexpr int m_startLives = 4;
 
+	GameAudio* m_audio;
 	sf::Clock m_fireTimer;
 	SpaceShip m_spaceShip;
 	ObjectPool<PBullet>* m_bulletPool;

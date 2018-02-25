@@ -67,6 +67,21 @@ void Asteroid::spawnAt(Vector2f position, Asteroid::Size size)
 	setVelocity(speed * rand(-1.f, 1.f), speed * rand(-1.f, 1.f));
 }
 
+void Asteroid::setExplodeSound(const sf::SoundBuffer& buffer)
+{
+	m_explodeSound.setBuffer(buffer);
+}
+
+void Asteroid::playExplodeSound()
+{
+	m_explodeSound.play();
+}
+
+bool Asteroid::hasExplodeSound() const
+{
+	return m_explodeSound.getBuffer() != nullptr;
+}
+
 bool Asteroid::detectCollision(SpaceShip* spaceship)
 {
 	return spaceship->getGlobalBounds().intersects(getGlobalBounds());

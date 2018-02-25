@@ -3,22 +3,26 @@
 #include "Random.h"
 #include <utility>
 #include <assert.h>
+#include "Context.h"
 #include "Constants.h"
 #include "ResourceHolder.h"
+#include "PausedState.h"
+#include "GameAudio.h"
 #include "StateManager.h"
 #include "GameOverState.h"
+#include "ResourcePaths.h"
 #include "GameState.h"
 #include "PlayState.h"
 #include "DebugLog.h"
 
 using namespace pure; using namespace sf; using namespace std;
 
-PlayState::PlayState(StateManager* manager, ResourceHolder* resources):
+PlayState::PlayState(StateManager* manager, ::Context* ctx):
 	State(manager),
-	m_player(&m_bulletPool),
+	m_player(&m_bulletPool, ctx->audio),
 	m_asteroidPool(255),
 	m_bulletPool(100),
-	m_resources(resources),
+	m_ctx(ctx),
 	m_numStartAsteroids(0),
 	m_playerLives(m_playerStartLives)
 {
@@ -32,7 +36,11 @@ void PlayState::update(float deltaTime)
 {
 
 	if (!canPlayerRespawn())
+	{
+		stopAndResetMusic();
 		m_stateManager->pushState(GameState::GameOver);
+	}
+		
 
 
 	if (getAsteroids().size() == 0)
@@ -133,10 +141,14 @@ void PlayState::draw(sf::RenderWindow& window)
 void PlayState::onCreate()
 {
 	m_player.setupKeybinds();
+	m_ctx->audio->gameplayMusic.setLoop(true);
+
 	float winSizeX = (float)getWindow().getSize().x;
 
+	const string fontPath = getResourcePath(Resource::Font_Arcade);
+
 	{
-		m_scoreText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
+		m_scoreText.setFont(*m_ctx->resources->fontManager.get(fontPath));
 		m_scoreText.setCharacterSize(24);
 		updateScoreDisplay(); // initially 0
 		const FloatRect textSize = m_scoreText.getLocalBounds();
@@ -145,7 +157,7 @@ void PlayState::onCreate()
 	}
 
 	{
-		m_livesText.setFont(*m_resources->fontManager.get("ARCADE_N.TTF"));
+		m_livesText.setFont(*m_ctx->resources->fontManager.get(fontPath));
 		m_livesText.setCharacterSize(24);
 		updateLivesDisplay();
 		const FloatRect textSize = m_livesText.getLocalBounds();
@@ -200,6 +212,9 @@ void PlayState::handleInput(const sf::Event& event)
 
 void PlayState::onActivate()
 {
+	if (!m_stateManager->getCurrentState<PausedState>())
+		m_ctx->audio->gameplayMusic.play();
+
 	if (m_stateManager->getCurrentState<GameOverState>())
 		reset();
 
@@ -208,6 +223,11 @@ void PlayState::onActivate()
 		const Vector2u winSize = getWindow().getSize();
 		m_player.spawn(Vector2f(winSize.x / 2.f, winSize.y / 2.f));
 	}
+}
+
+void PlayState::onDeactivate()
+{
+
 }
 
 void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
@@ -236,6 +256,8 @@ void PlayState::destroyAsteroid(PAsteroid* ast, int astIndx)
 			newAst->spawnAt(ast->getPosition(), size);
 		}
 	}
+
+	m_ctx->audio->explodeSound.play();
 	
 	if (astIndx >= 0)
 	{
@@ -258,6 +280,12 @@ void PlayState::calcPlayerScore(Asteroid::Size astSize)
 		case Asteroid::Size::Medium: m_playerScore += 50;  break;
 		case Asteroid::Size::Small:  m_playerScore += 100; break;
 	}
+}
+
+void PlayState::stopAndResetMusic()
+{
+	m_ctx->audio->gameplayMusic.pause();
+	m_ctx->audio->gameplayMusic.setPlayingOffset(sf::Time::Zero);
 }
 
 void PlayState::updateLivesDisplay()

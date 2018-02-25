@@ -79,12 +79,10 @@ public:
 			destroy(i);
 	}
 
-protected:
+private:
 
 	std::vector<T> m_objects;
 	std::vector<T*> m_activeObjects;
 	T* m_firstAvailable;
-
-private:
 	const int m_maxSize;
 };

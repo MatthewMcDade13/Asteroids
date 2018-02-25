@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Audio/Sound.hpp>
 #include "SpaceEntity.h"
 #include "WireFrameShape.h"
 #include "Poolable.h"
@@ -13,7 +14,7 @@ public:
 
 	enum class Size : int
 	{
-		Microscopic = 0, // Irrelvant, only used for overflows / nonexistant asteroids
+		Microscopic = 0, // Irrelevant, only used for overflows / nonexistant asteroids
 		Small = 10,
 		Medium = 20,
 		Large = 30
@@ -28,6 +29,11 @@ public:
 	sf::Vector2f getMidOffset() const;
 
 	void spawnAt(sf::Vector2f position, Asteroid::Size size);
+	void setExplodeSound(const sf::SoundBuffer& buffer);
+	void playExplodeSound();
+
+	bool hasExplodeSound() const;
+
 	bool detectCollision(class SpaceShip* spaceship);
 
 protected:
@@ -48,6 +54,8 @@ private:
 	friend Asteroid::Speed& operator++(Asteroid::Speed& s);
 
 	WireFrameShape m_body;
+	sf::Sound m_explodeSound;
+
 	Speed m_activeSpeed;
 	Asteroid::Size m_size;
 

@@ -2,6 +2,8 @@
 
 #include "StateManager.h"
 #include "AsteroidPlayer.h"
+#include "Context.h"
+#include "GameAudio.h"
 #include "Asteroid.h"
 #include "Game.h"
 
@@ -21,6 +23,8 @@ public:
 private:
 
 	pure::StateManager m_stateManager;
+	GameAudio m_audio;
+	::Context m_ctx;
 
 	virtual void onGameStart() final override;
 

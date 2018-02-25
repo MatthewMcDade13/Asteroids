@@ -34,6 +34,21 @@ void SpaceShip::spawnAt(Vector2f position)
 	m_body.updateBounds();
 }
 
+void SpaceShip::setFireSound(const sf::SoundBuffer & buffer)
+{
+	m_fireSound.setBuffer(buffer);
+}
+
+void SpaceShip::setExplodeSound(const sf::SoundBuffer & buffer)
+{
+	m_explodeSound.setBuffer(buffer);
+}
+
+void SpaceShip::playExplodeSound()
+{
+	m_explodeSound.play();
+}
+
 FloatRect SpaceShip::getLocalBounds() const
 {
 	return m_body.getLocalBounds();
@@ -53,6 +68,8 @@ void SpaceShip::fire(Bullet* bullet) const
 {
 	bullet->spawnAt(getPosition());
 	bullet->setVelocity(getForwardDirection() * m_bulletSpeed);
+
+	if (m_fireSound.getBuffer()) m_fireSound.play();
 }
 
 void SpaceShip::draw(RenderTarget& target, RenderStates states) const

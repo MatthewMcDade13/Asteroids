@@ -4,6 +4,7 @@
 #include <memory>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Audio/Music.hpp>
 #include "State.h"
 #include "Entity.h"
 #include "AsteroidPlayer.h"
@@ -19,10 +20,12 @@ namespace pure
 	struct ResourceHolder;
 }
 
+struct Context;
+
 class PlayState final : public pure::State, private sf::NonCopyable
 {
 public:
-	PlayState(pure::StateManager* manager, pure::ResourceHolder* resources);
+	PlayState(pure::StateManager* manager, ::Context* ctx);
 	~PlayState();
 
 	virtual void update(float deltaTime) final override;
@@ -40,8 +43,10 @@ private:
 	ObjectPool<PAsteroid> m_asteroidPool;
 	ObjectPool<PBullet> m_bulletPool;
 
-	pure::ResourceHolder* m_resources;
+	::Context* m_ctx;
+	//pure::ResourceHolder* m_resources;
 	int m_playerScore;
+
 	sf::Text m_scoreText;
 	sf::Text m_livesText;
 
@@ -80,9 +85,11 @@ private:
 
 	virtual void handleInput(const sf::Event& event) final override;
 	virtual void onActivate() final override;
+	virtual void onDeactivate() final override;
 
 	void destroyAsteroid(PAsteroid* ast, int astIndx = -1);
 	void calcPlayerScore(Asteroid::Size astSize);
+	void stopAndResetMusic();
 	void updateLivesDisplay();
 	void updateScoreDisplay();
 

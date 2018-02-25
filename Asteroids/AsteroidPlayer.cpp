@@ -3,6 +3,7 @@
 #include "SpaceShip.h"
 #include "AsteroidPlayer.h"
 #include "Conversions.h"
+#include "GameAudio.h"
 #include "Bullet.h"
 #include "ObjectPool.h"
 #include "DebugLog.h"
@@ -11,7 +12,8 @@ using namespace std;
 using namespace pure;
 using namespace sf;
 
-AsteroidPlayer::AsteroidPlayer(ObjectPool<PBullet>* bulletPool) :
+AsteroidPlayer::AsteroidPlayer(ObjectPool<PBullet>* bulletPool, GameAudio* audio) :
+	m_audio(audio),
 	m_spaceShip(),
 	m_bulletPool(bulletPool),
 	m_rotationSpeed(200.f),
@@ -31,6 +33,7 @@ void AsteroidPlayer::spawn(Vector2f position)
 
 void AsteroidPlayer::die()
 {
+	m_audio->explodeSound.play();
 	m_spaceShip.deactivate();
 }
 
@@ -90,6 +93,7 @@ void AsteroidPlayer::setupKeybinds()
 
 		if (canFire)
 		{
+			m_audio->lazerSound.play();
 			Bullet* bullet = m_bulletPool->create();
 			m_spaceShip.fire(bullet);
 			m_lastFireTime = m_fireTimer.getElapsedTime().asSeconds();
