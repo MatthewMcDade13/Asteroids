@@ -36,7 +36,7 @@ PlayState::~PlayState()
 void PlayState::update(float deltaTime)
 {
 
-	if (!canPlayerRespawn())
+	if (!canPlayerRespawn() && m_stateManager->getCurrentState<PlayState>())
 	{
 		stopAndResetMusic();
 		m_stateManager->pushState(GameState::GameOver);
@@ -120,6 +120,8 @@ void PlayState::update(float deltaTime)
 		if (ast->detectCollision(&m_player.getShip()))
 		{
 			m_player.die();
+			m_explosions.emplace_back();
+			m_explosions.back().spawnAt(m_player.getShip().getPosition());
 			m_playerLives--;
 			updateLivesDisplay();
 
