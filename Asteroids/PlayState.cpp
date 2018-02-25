@@ -23,6 +23,7 @@ PlayState::PlayState(StateManager* manager, ::Context* ctx):
 	m_asteroidPool(255),
 	m_bulletPool(100),
 	m_ctx(ctx),
+	m_playerScore(0),
 	m_numStartAsteroids(0),
 	m_playerLives(m_playerStartLives)
 {
