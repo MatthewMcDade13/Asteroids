@@ -18,6 +18,7 @@ add_executable(
     SpaceShip.cpp
     WireFrameShape.cpp
 )
+
 target_link_libraries(Asteroids ${PUREENGINE_LIBRARIES} ${SFML_LIBRARIES})
 
 target_include_directories(Asteroids PRIVATE ${PUREENGINE_INCLUDE_DIRS})
